@@ -1,0 +1,144 @@
+
+
+function m = initproperties( m )
+% This function is called at time zero in the INITIALISATION section of the
+% interaction function.  It provides commands to set each of the properties
+% that are contained in m.globalProps.  Uncomment whichever ones you would
+% like to set yourself, and put in whatever value you want.
+%
+% Some of these properties are for internal use only and should never be
+% set by the user.  At some point these will be moved into a different
+% component of m, but for the present, just don't change anything unless
+% you know what it is you're changing.
+
+%    m = leaf_setproperty( m, 'trinodesvalid', true );
+%    m = leaf_setproperty( m, 'prismnodesvalid', true );
+%    m = leaf_setproperty( m, 'thicknessRelative', 0.010700 );
+%    m = leaf_setproperty( m, 'thicknessArea', 1.000000 );
+%    m = leaf_setproperty( m, 'activeGrowth', 1.000000 );
+%    m = leaf_setproperty( m, 'displayedGrowth', 17.000000 );
+%    m = leaf_setproperty( m, 'displayedMulti', [] );
+%    m = leaf_setproperty( m, 'allowNegativeGrowth', true );
+%    m = leaf_setproperty( m, 'usePrevDispAsEstimate', true );
+%    m = leaf_setproperty( m, 'mingradient', 1.000000 );
+%    m = leaf_setproperty( m, 'relativepolgrad', false );
+%    m = leaf_setproperty( m, 'userpolarisation', false );
+%    m = leaf_setproperty( m, 'thresholdsq', 0.000061 );
+%    m = leaf_setproperty( m, 'splitmargin', 1.400000 );
+%    m = leaf_setproperty( m, 'splitmorphogen', '' );
+%    m = leaf_setproperty( m, 'thresholdmgen', 0.500000 );
+%    m = leaf_setproperty( m, 'bulkmodulus', 1.000000 );
+%    m = leaf_setproperty( m, 'unitbulkmodulus', true );
+%    m = leaf_setproperty( m, 'poissonsRatio', 0.300000 );
+%    m = leaf_setproperty( m, 'starttime', 68.000000 );
+%    m = leaf_setproperty( m, 'timestep', 1.000000 );
+%    m = leaf_setproperty( m, 'timeunitname', 'hours' );
+%    m = leaf_setproperty( m, 'distunitname', 'mm' );
+%    m = leaf_setproperty( m, 'scalebarvalue', 0.000000 );
+%    m = leaf_setproperty( m, 'validateMesh', true );
+%    m = leaf_setproperty( m, 'rectifyverticals', false );
+%    m = leaf_setproperty( m, 'allowSplitLongFEM', false );
+%    m = leaf_setproperty( m, 'longSplitThresholdPower', 0.000000 );
+%    m = leaf_setproperty( m, 'allowSplitBentFEM', false );
+%    m = leaf_setproperty( m, 'allowSplitBio', false );
+%    m = leaf_setproperty( m, 'allowFlipEdges', false );
+%    m = leaf_setproperty( m, 'allowElideEdges', false );
+%    m = leaf_setproperty( m, 'mincellangle', 0.200000 );
+%    m = leaf_setproperty( m, 'alwaysFlat', 1.000000 );
+%    m = leaf_setproperty( m, 'flattenforceconvex', true );
+%    m = leaf_setproperty( m, 'flatten', false );
+%    m = leaf_setproperty( m, 'flattenratio', 1.000000 );
+%    m = leaf_setproperty( m, 'useGrowthTensors', false );
+%    m = leaf_setproperty( m, 'plasticGrowth', false );
+%    m = leaf_setproperty( m, 'totalinternalrotation', 0.000000 );
+%    m = leaf_setproperty( m, 'stepinternalrotation', 2.000000 );
+%    m = leaf_setproperty( m, 'showinternalrotation', false );
+%    m = leaf_setproperty( m, 'performinternalrotation', false );
+%    m = leaf_setproperty( m, 'internallyrotated', false );
+%    m = leaf_setproperty( m, 'maxFEcells', 0.000000 );
+%    m = leaf_setproperty( m, 'inittotalcells', 0.000000 );
+%    m = leaf_setproperty( m, 'maxBioAcells', 0.000000 );
+%    m = leaf_setproperty( m, 'maxBioBcells', 0.000000 );
+%    m = leaf_setproperty( m, 'colors', (3 values) );
+%    m = leaf_setproperty( m, 'colorvariation', 0.000000 );
+%    m = leaf_setproperty( m, 'colorparams', (6 values) );
+%    m = leaf_setproperty( m, 'freezing', 0.000000 );
+%    m = leaf_setproperty( m, 'canceldrift', 0.000000 );
+%    m = leaf_setproperty( m, 'mgen_interaction', (unknown type ''function_handle'') );
+%    m = leaf_setproperty( m, 'mgen_interactionName', 'arleaf_ver3187_ad0p4goodunfixrim_101021' );
+%    m = leaf_setproperty( m, 'allowInteraction', true );
+%    m = leaf_setproperty( m, 'interactionValid', true );
+%    m = leaf_setproperty( m, 'gaussInfo', (unknown type ''struct'') );
+%    m = leaf_setproperty( m, 'stitchDFs', [] );
+%    m = leaf_setproperty( m, 'D', (36 values) );
+%    m = leaf_setproperty( m, 'C', (36 values) );
+%    m = leaf_setproperty( m, 'G', (6 values) );
+%    m = leaf_setproperty( m, 'solver', 'cgs' );
+%    m = leaf_setproperty( m, 'solvertolerance', 0.000100 );
+%    m = leaf_setproperty( m, 'diffusiontolerance', 0.000001 );
+%    m = leaf_setproperty( m, 'allowsparse', true );
+%    m = leaf_setproperty( m, 'maxIters', 166.000000 );
+%    m = leaf_setproperty( m, 'maxsolvetime', 1000.000000 );
+%    m = leaf_setproperty( m, 'cgiters', 232.000000 );
+%    m = leaf_setproperty( m, 'simsteps', 0.000000 );
+%    m = leaf_setproperty( m, 'stepsperrender', 0.000000 );
+%    m = leaf_setproperty( m, 'growthEnabled', true );
+%    m = leaf_setproperty( m, 'diffusionEnabled', true );
+%    m = leaf_setproperty( m, 'makemovie', 0.000000 );
+%    m = leaf_setproperty( m, 'moviefile', '' );
+%    m = leaf_setproperty( m, 'codec', 'None' );
+%    m = leaf_setproperty( m, 'autonamemovie', true );
+%    m = leaf_setproperty( m, 'overwritemovie', false );
+%    m = leaf_setproperty( m, 'framesize', [] );
+%    m = leaf_setproperty( m, 'mov', [] );
+%    m = leaf_setproperty( m, 'jiggleProportion', 1.000000 );
+%    m = leaf_setproperty( m, 'cvtperiter', 0.200000 );
+%    m = leaf_setproperty( m, 'boingNeeded', false );
+%    m = leaf_setproperty( m, 'initialArea', 0.008228 );
+%    m = leaf_setproperty( m, 'bendunitlength', 0.090709 );
+%    m = leaf_setproperty( m, 'targetRelArea', 1.000000 );
+%    m = leaf_setproperty( m, 'defaultinterp', 'min' );
+%    m = leaf_setproperty( m, 'readonly', false );
+%    m = leaf_setproperty( m, 'projectdir', 'D:\DArT_Models\trunk\Growth Arrest\PaperWorthy\UnfixedBase' );
+%    m = leaf_setproperty( m, 'modelname', 'ArLeaf_ver3187_Ad0p4GoodUnfixRim_101021' );
+%    m = leaf_setproperty( m, 'allowsave', 0.000000 );
+%    m = leaf_setproperty( m, 'addedToPath', true );
+%    m = leaf_setproperty( m, 'bendsplit', 0.300000 );
+%    m = leaf_setproperty( m, 'usepolfreezebc', false );
+%    m = leaf_setproperty( m, 'dorsaltop', true );
+%    m = leaf_setproperty( m, 'defaultazimuth', -45.000000 );
+%    m = leaf_setproperty( m, 'defaultelevation', 33.750000 );
+%    m = leaf_setproperty( m, 'defaultroll', 0.000000 );
+%    m = leaf_setproperty( m, 'defaultViewParams', (unknown type ''struct'') );
+%    m = leaf_setproperty( m, 'comment', '' );
+%    m = leaf_setproperty( m, 'legendTemplate', '%T: %q\n%m' );
+%    m = leaf_setproperty( m, 'bioAsplitcells', false );
+%    m = leaf_setproperty( m, 'bioApullin', 0.142857 );
+%    m = leaf_setproperty( m, 'bioAfakepull', 0.202073 );
+%    m = leaf_setproperty( m, 'interactive', false );
+%    m = leaf_setproperty( m, 'coderevision', 3187 );
+%    m = leaf_setproperty( m, 'coderevisiondate', '2010-10-15 08:03:44.157047' );
+%    m = leaf_setproperty( m, 'modelrevision', 3172.000000 );
+%    m = leaf_setproperty( m, 'modelrevisiondate', '2010-10-12 08:38:13.898165' );
+%    m = leaf_setproperty( m, 'vxgrad', (108 values) );
+%    m = leaf_setproperty( m, 'lengthscale', 0.107000 );
+%    m = leaf_setproperty( m, 'targetAbsArea', 0.007388 );
+%    m = leaf_setproperty( m, 'RecordMeshes', (unknown type ''struct'') );
+%    m = leaf_setproperty( m, 'usefrozengradient', true );
+%    m = leaf_setproperty( m, 'solverprecision', 'double' );
+%    m = leaf_setproperty( m, 'thicknessMode', 'physical' );
+%    m = leaf_setproperty( m, 'savedrunname', '' );
+%    m = leaf_setproperty( m, 'savedrundesc', '' );
+%    m = leaf_setproperty( m, 'solvertolerancemethod', 'norm' );
+%    m = leaf_setproperty( m, 'physicalThickness', 0.000000 );
+end
+
+
+
+
+
+% Here you may add any functions of your own, that you want to call from
+% the interaction function, but never need to call from outside it.
+% Whichever section they are called from, they must respect the same
+% restrictions on what modifications they are allowed to make to the mesh.
+% This comment can be deleted.of sink

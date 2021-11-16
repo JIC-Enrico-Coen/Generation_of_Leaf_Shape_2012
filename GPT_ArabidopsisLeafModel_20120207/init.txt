@@ -1,0 +1,75 @@
+% model combinations explored in the paper: 
+% Non-Deforming Model:                                             modelname='NONDEFORMING',     modelversion='DYNAMIC',   modeloperations='NONE';
+% Organiser-Based Fixed Model:                                     modelname='PROXORG',              modelversion='FIXED',   modeloperations='NONE';
+% Organiser-Based Dynamic Model:                                   modelname='PROXORG',              modelversion='DYNAMIC', modeloperations='NONE';
+% Organiser-Based Dynamic Model with transient polarity removal:   modelname='PROXORG',              modelversion='DYNAMIC', modeloperations='TRANSIENTPOLREMOVAL';
+% Organiser-Based Model with excision:                             modelname='PROXORG',              modelversion='FIXED',   modeloperations='EXCISION'; 
+
+
+if Steps(m) == 0
+    
+    % Model Visualisation and Setup Parameters
+    m = leaf_setproperty( m, 'mingradient', 0, 'timestep', 1, 'userpolarisation',false, 'bioAsplitcells', false, 'allowSplitBio',false);
+    m = leaf_plotoptions( m, 'hiresdpi', 300,'FEthinlinesize', 1, 'layeroffset', 0.45 );
+    m = leaf_fix_vertex( m, 'vertex', find(m.nodes(:,2)<=min(m.nodes(:,2)+0.001)), 'dfs', 'y' );
+    
+    % Model output times to plot images for the paper.
+    m.userdata.outputtimes = [87 117 148 180 205];
+    m.userdata.output = 0; % make high resultion images when time = m.userdata.outputtimes; 0 = no output.
+    
+    % Model types differing in their main polarity system
+    m.userdata.ranges.modelname.range{1}='NONDEFORMING';
+    m.userdata.ranges.modelname.range{2}='PROXORG';
+    m.userdata.ranges.modelname.index =1;
+
+    % Different polarity options for the organiser-based submodels
+    m.userdata.ranges.modelversion.range{1} = 'FIXED'; 
+    m.userdata.ranges.modelversion.range{2} = 'DYNAMIC';  
+    m.userdata.ranges.modelversion.index =2;
+    
+    % modeloperation - ways to maniputale the canvas or polarity
+    m.userdata.ranges.modeloperation.range{1} = 'NONE';
+    m.userdata.ranges.modeloperation.range{2} = 'TRANSIENTPOLREMOVAL';
+    m.userdata.ranges.modeloperation.range{3} = 'EXCISION';
+    m.userdata.ranges.modeloperation.index =1;
+    
+    % second layer superimposed onto the canvas
+    m.userdata.ranges.modeldeco.range{1} = 'NONE';
+    m.userdata.ranges.modeldeco.range{2} = 'CELLSEARLY';
+    m.userdata.ranges.modeldeco.range{3} = 'CELLSLATE';
+    m.userdata.ranges.modeldeco.range{4} = 'CIRCLES';
+    m.userdata.ranges.modeldeco.index =1;
+    
+    
+    % parameters and values, with norm value and +/- 20%
+    m.userdata.ranges.bpgrad.range = [0.039 0.156 0.195 0.234 0.351]; % for 20% and 80%
+    m.userdata.ranges.bpgrad.index = 3;
+    m.userdata.ranges.ppgrad.range = [0.0328 0.041 0.0492];
+    m.userdata.ranges.ppgrad.index = 2;
+    m.userdata.ranges.plam.range = [0.0188 0.0235 0.0282]; 
+    m.userdata.ranges.plam.index = 2;
+    m.userdata.ranges.glate.range = [0.0038 0.0048 0.0058]; 
+    m.userdata.ranges.glate.index = 3;
+    m.userdata.ranges.hlate.range = [1.76 2.2 2.64]; 
+    m.userdata.ranges.hlate.index = 2;
+    m.userdata.ranges.hmid.range = [0.4 0.5 0.6];
+    m.userdata.ranges.hmid.index = 2;
+    m.userdata.ranges.plate.range = [0.56 0.7 0.84]; 
+    m.userdata.ranges.plate.index = 2;
+    m.userdata.ranges.bpol.range = [0.08 0.1 0.12];
+    m.userdata.ranges.bpol.index = 2;
+    
+end
+
+modelname = m.userdata.ranges.modelname.range{m.userdata.ranges.modelname.index};
+modelversion = m.userdata.ranges.modelversion.range{m.userdata.ranges.modelversion.index};
+modeloperation = m.userdata.ranges.modeloperation.range{m.userdata.ranges.modeloperation.index};
+modeldeco = m.userdata.ranges.modeldeco.range{m.userdata.ranges.modeldeco.index};
+disp(sprintf('\n------> modelname %s modelversion %s modeloperation %s modeldeco %s \n',...
+    modelname,modelversion,modeloperation,modeldeco));
+
+bpol = m.userdata.ranges.bpol.range(m.userdata.ranges.bpol.index);
+
+m.plotdefaults.perelement = [];
+m.plotdefaults.perelementaxes = [];
+m.plotdefaults.perelementcomponents = [];

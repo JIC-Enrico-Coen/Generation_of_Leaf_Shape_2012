@@ -1,0 +1,305 @@
+
+if Steps(m) == 1 % a bit later to give the cluster the chance to catch up.
+    
+    %% PRN setup
+    
+    switch modelname
+        
+        case 'NONDEFORMING'
+            % setup polarity parallel to the external y-axis and canvas
+            % midline
+            P = max(m.nodes(:,2)) - m.nodes(:,2);
+            P = P/max(P)*bpol;
+            
+            % POL levels remain constant throughout the simulation
+            m.mgen_production(:,polariser_i) = 0;
+            m = leaf_mgen_conductivity( m, 'polariser', 0 );
+            m = leaf_mgen_absorption( m, 'polariser', 0 );
+            
+        case 'PROXORG'
+                    % PROXORG and POLARISER (POL) setup 
+                    proxorg_ind= m.nodes(:,2)<=min(m.nodes(:,2))+0.001;
+                    id_proxorg_p(proxorg_ind) = 1;
+                    P(proxorg_ind) = bpol;
+                    m = leaf_fix_mgen( m, polariser_i,'vertex',find(proxorg_ind),'fix', 1);
+                    m = leaf_mgen_absorption(m, polariser_i, 0.1);
+                    
+                    switch modelversion
+                        % vary POL diffusion rate according to the
+                        % model version to establish visible gradients
+                        % through the simulation in both model versions.
+                        case 'FIXED'
+                    m = leaf_mgen_conductivity(m, polariser_i, 0.0001); 
+                    
+                        case 'DYNAMIC'
+                    m = leaf_mgen_conductivity(m, polariser_i, 0.01); 
+                    end
+        otherwise
+            % the model will grow isotropically;
+    end
+
+    %% GRN setup   
+    
+    switch modeloperation            
+        case 'EXCISION'
+            m.userdata.outputtimes = [148 205];
+            
+            % setting up DISTAL and CUTEDGE. Regions containing DISTAL will be removed at a later stage. 
+            origin = [0 -0.15];
+            radius = 0.14; 
+            dist = sqrt((m.nodes(:,1)-origin(1)).^2 + (m.nodes(:,2)-origin(2)).^2);
+            id_distal_p(dist > radius) = 1;
+            id_cutedge_p(dist > (radius-radius/30)) = 1;    
+    end
+    
+    
+    %% KRN FACTORS
+    
+    % Visulalisation Factors setup
+    v_leaf_p(:) =1;
+    
+    % Identity Factors setup
+    
+    % LAMINA (LAM)
+    id_lam_p(m.nodes(:,2)>(-0.038)& m.nodes(:,2)<0.005) = 1.5;
+    m = leaf_mgen_conductivity(m, id_lam_i, 0.00082);
+    
+    % MIDVEIN (MID)
+    id_mid_p(:) = (max(m.nodes(:,2)) - m.nodes(:,2));
+    id_mid_p = id_mid_p/max(id_mid_p);
+    id_mid_p(abs(m.nodes(:,1))>0.0038) = 0; 
+    
+    % PGRAD
+    % set up a linear gradient
+    bpgrad = m.userdata.ranges.bpgrad.range(m.userdata.ranges.bpgrad.index);
+    id_pgrad_p(:) = max(m.nodes(:,2)) - m.nodes(:,2);
+    id_pgrad_p(:) = id_pgrad_p/max(id_pgrad_p)*(1-bpgrad);
+    id_pgrad_p(:) = id_pgrad_p+bpgrad;
+    
+    
+elseif realtime > 67 && realtime < 68+ dt
+    
+    % fixing LAM distribution and resetting LAM to a low value in
+    % the petiole
+    m = leaf_mgen_conductivity(m, id_lam_i, 0);
+    id_lam_p(m.nodes(:,2)<(min(m.nodes(:,2))+0.011)) = 0.4;
+    
+    
+elseif realtime > 85 && realtime < 86+ dt
+    % Setup Parameters - fixing polarity directions
+    
+    switch modelversion
+        case 'FIXED'
+             m = leaf_setproperty( m, 'mingradient', 2);
+             
+             m = leaf_mgen_conductivity(m, polariser_i, 0);
+             m = leaf_mgen_absorption(m, polariser_i, 0);
+        otherwise 
+            % the polarity will remain dynamic and directions will adjust
+            % with the levels of POL. 
+    end
+        
+    %% Biological Growth
+elseif realtime >= 87
+    
+    % read in the parameters and simplify the parameter names
+    ppgrad = m.userdata.ranges.ppgrad.range(m.userdata.ranges.ppgrad.index);
+    plam = m.userdata.ranges.plam.range(m.userdata.ranges.plam.index);
+    glate = m.userdata.ranges.glate.range(m.userdata.ranges.glate.index);
+    plate = m.userdata.ranges.plate.range(m.userdata.ranges.plate.index);
+    hlate = m.userdata.ranges.hlate.range(m.userdata.ranges.hlate.index);
+    hmid = m.userdata.ranges.hmid.range(m.userdata.ranges.hmid.index);
+    
+    % model operations
+    if realtime > 147 && realtime < 148+ dt
+        switch modeloperation
+            
+            case 'TRANSIENTPOLREMOVAL'                
+                ind = find(id_proxorg_l~=1);
+                ind2 = randperm(length(ind));
+                P(ind(ind2)) = P(ind)/10; 
+                
+            case 'EXCISION'
+                id_inc_p(id_cutedge_l==1)=1;
+        end
+    end
+    
+    %% GRN
+    % increase of LATE levels over time.
+    if realtime >= 148 
+        id_late_p = (realtime - 148)*glate;
+    end
+    
+    
+    %% KRN
+        % growth interaction network for all models
+            kapar_p(:) = ppgrad.*id_pgrad_l... Kpar promotion by PGRAD (parallel to POL gradient)
+                        .*inh(hlate,id_late_l)... Kpar inhibition by LATE
+                        .*inh(5,id_inc_l); % in case of distal excision, growth restriction at the cut.
+            kbpar_p(:) = kapar_p;
+            kaper_p(:) = plam*id_lam_l...Kper promotion by LAM (perpendicular to POL gradient)
+                        .*pro(plate,id_late_l)...Kper promotion by LATE
+                        .*inh(hmid, id_mid_l)...Kper inhibition along the midline by MID
+                        .*inh(5,id_inc_l); % in case of distal excision, growth restriction at the cut.
+            kbper_p(:) = kaper_p(:);
+
+end
+
+%% PRN continuous
+    % in the non-deforming model, the POL gradient is reset after every iteration.
+switch modelname
+    case 'NONDEFORMING'
+        P = max(m.nodes(:,2)) - m.nodes(:,2);
+        P = P/max(P)*bpol;
+    otherwise
+        % in all other cases polarity interaction have been established during setup.
+end
+
+%% Model Decorations - optional
+
+switch modeldeco
+    case 'CIRCLES'  % make simple circles. 
+         if Steps(m) == 1 
+            m = leaf_makesecondlayer( m, ... 
+                'mode', 'each', ...  
+                'relarea', 1/80,...
+                'probpervx', 'V_LEAF', ...
+                'numcells',50,...
+                'sides', 20, ...  
+                'colors', [0.8 0.8 0.8],...
+                'colorvariation', 0,...
+                'add', false,...
+                'allowoverlap', false);  
+        end
+        
+    case 'CELLSEARLY' % load in cell outlines taken from a 3-day old leaf.
+        if Steps(m) == 1 
+
+            % rotation and rescaling parameters to project cells onto the
+            % canvas
+            ang = pi+0.1; scale = 1000;
+            
+            % load in the position of each vertex and rescale (from meters
+            % to mm)
+            path = [fileparts(which(m.globalProps.modelname)),filesep,'EarlyClones'];
+            point = load([path,filesep,'allpoints.mat']);
+            points = point.all_points(:,:,1)*scale;
+            pointsC1 = points(:,1)-mean(points(:,1))+0.0023;
+            pointsC2 = points(:,2)-mean(points(:,2))+0.0045;
+            
+            % rotate points
+            R = [cos(ang) sin(ang); -sin(ang) cos(ang)];
+            pointsC = [pointsC1 pointsC2]*R;
+            points(:,3) = zeros(length(points),1); % to get z-axis component
+            pointsC = [pointsC points(:,3)];
+            
+            % load in the cell vertices
+            cells = load([path,filesep,'cells.mat']);
+            cells = cells.cells;
+            
+            l = 0;
+            cellcount = [86 76 83 73 68 72 0 89 62 60 56 53 5 50 13 19 22 91 96 95 24 28 94 82 35 41 8 4 122 115 109 125 116]; % from 122
+            for i=cellcount+1
+                l = l+1;
+                cell{l} = cells(i).pts;
+            end
+            
+            % position the cells in the canvas
+            m = leaf_makesecondlayer( m, ...
+                'vertexdata',pointsC,...
+                'celldata',cell);
+            
+            % recolour superimposed cells
+            cols = load([path,filesep,'1946Ycolours']);
+            cols = cols.colours;
+            for j=1:(size(cellcount,2)-size(cols,1))
+            cols(end+1,:) = cols(j,:);
+            end
+            cols = cols./255;
+            cols = cols(1:length(cellcount),:);
+            m.secondlayer.cellcolor = cols;
+            
+        end
+        
+    case 'CELLSLATE' % load in cell outlines taken from a 6-day old leaf.
+        if realtime > 156 && realtime < 157+ dt
+            
+            C2 = -0.31;
+            ang = pi; scale = 1e3;
+            
+            path = [fileparts(which(m.globalProps.modelname)),filesep,'LateClones'];
+            point = load([path,filesep,'allpoints.mat']);
+            points = point.all_points(:,:,1)*scale;
+            
+            % reposition
+            points(:,3) = zeros(length(points),1);
+            pointsC1 = points(:,1)-mean(points(:,1));
+            pointsC2 = points(:,2)-mean(points(:,2))+C2;
+            
+            % rotate
+            R = [cos(ang) sin(ang); -sin(ang) cos(ang)];
+            pointsC = [pointsC1 pointsC2]*R;
+            pointsC = [pointsC points(:,3)];
+            
+            % cells
+            cells = load([path,filesep,'cells.mat']);
+            cells = cells.cells;
+            
+            for i=1:size(cells,2)
+                cell{i} = cells(i).pts;
+            end
+            
+            m = leaf_makesecondlayer( m, ...
+                'vertexdata',pointsC,...
+                'celldata',cell);
+            
+            % recolour superimposed cells
+            cols = load([path,filesep,'1946Ycolours']);
+            cols = cols.colours./255;
+            m.secondlayer.cellcolor = cols;
+            
+        end
+    otherwise 
+        % the model will not have a second layer. 
+end
+
+%% Growth Rate Calculations
+
+% Specified karea
+karea_p(:) = kapar_p+kaper_p;
+
+
+% m = calculateOutputs(m);
+% [acA,frames] = tensorsToComponents( m.outputs.actualstrain.A, m.cellFrames );
+% kmax = perFEtoperVertex( m, max(acA(:,[1 2]),[],2));
+% kmin = perFEtoperVertex( m, min(acA(:,[1 2]),[],2));
+% %aniso_p(:) = abs(kmax-kmin)./max(kmax,kmin);
+% karea_p(:) = kmin+kmax;
+
+% [inplane,outofplane] = splitVector( m.outputs.rotations,m.unitcellnormals );
+% rot_p(:) = perFEtoperVertex( m, inplane);
+
+
+output = m.userdata.outputtimes(2:end);
+
+% calculate growth over 24 hour intervals
+if sum(ismember(output-24,realtime))
+    m.userdata.oldpos = m.prismnodes;
+    m.userdata.starttime = realtime;
+    
+elseif sum(ismember(output-1,realtime))
+    displacements = m.prismnodes - m.userdata.oldpos;
+    [growth,gf] = leaf_computeGrowthFromDisplacements( m, displacements, ...
+        realtime - m.userdata.starttime,'axisorder', 'maxminnor', ...
+        'anisotropythreshold', 0.05);
+    
+     % plot resultant areal growth rates over 24-h intervals.    
+     %m = leaf_plotoptions( m, 'pervertex',perFEtoperVertex(m,sum(growth(:,1:2),2)) ,'perelementaxes', gf(:,1,:), 'drawtensoraxes', true );
+  
+    
+elseif sum(ismember(output,realtime)) && m.userdata.output ==1
+    % Output - plot an image at high resolution   
+    path = fileparts(which(m.globalProps.modelname));
+    [m,ok] = leaf_snapshot( m,[path,filesep,'snapshots',filesep,modelname,'_',modeltype,'.png'], 'resolution',[]); %
+
+end

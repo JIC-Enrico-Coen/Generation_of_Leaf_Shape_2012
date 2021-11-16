@@ -1,0 +1,85 @@
+GPT_ArabidopsisLeafModel_20120207
+Last version was accepted, renewed clean up to make sure everything is fine. 
+
+GPT_ArabidopsisLeafModel_20111213
+Hopefully final version of the paper. Cleaned up and all correct. 
+
+GPT_ArLeaf_PaperResubmission_20111211
+Try and make the principal growth directiosn in the model even better by: increasing plam at early stages? 
+by reducing mid span and maybe by increasing the gradient of lam. 
+
+GPT_ArLeaf_Paper_20110722
+Same as before but without POL decay when DISTORG is present. 
+
+GPT_ArLeaf_Paper_20110712
+Cleaned up version for the paper. Also things were renamed and moved. 
+
+GPT_ArLeaf_20110621
+More elements (now 1872, previously 1120). 
+
+02/06/2011 GPT_ArLeaf_20110602
+Cleaned up version of the nearly finished model for the paper. 
+
+
+22/05/20110 ArLeaf_ThesisChap2_110522
+Make figures for the thesis. 
+
+06/05/2011 ArLeaf_RT-LATE2_110506
+LATE2 (another age factor) comes in to arrest growth in width a little later than the original age factor. 
+
+
+17/03/2011 ArLeaf_ProxRTnorim_110317
+Cut out rim and midvein to see how cells look and directions. 
+
+
+28/03/2011 ArLeaf_ProxNamesRT_110228
+Now growth will be calculated in real-time. Therefore rates will have to be higher. 
+Also, Kper needs to receive more of a gradient to make the karea look better. 
+
+
+24/02/2011 ArLeaf_ProxNames_110225b
+Same model as before, just with the right names, as used in the paper description. 
+
+
+22/02/2011 ArLeaf_ProxPol2_110225b
+Do not fix the polarity from the beginning, but make the threshold lower. Also, let POL euilibirate before starting,
+at least a little bit. 
+
+25/01/2011 ArLeaf_Prox_110125b
+Better model, where age is increasing over time. 
+
+19/01/2010 ArLeaf_Prox_110119
+Improvement from the 18b model, as the size is not quite right. 
+
+21/12/2010 ArLeaf_ProxDrop_101221
+Drop Prox levels over time. Prox has a linear start and does not diffuse. Keeping the model
+simple again. Lam will increase over time so adjust the anisotropy patterns. 
+
+14/12/2010 ArLeaf_1YouthPhaseC_b_101214
+the previous model is pretty good, but the leaf is a little smalle at the end of Phase B still. 
+Everything else looks pretty good though. Now the Prox gradient will be made a little more
+shallow again, to see if the leaf can get bigger again. 
+
+14/12/2010 ArLeaf_1YouthPhaseCDrop_101214
+Keep width the same throughout. Only drop length and only in phase C. 
+
+13/12/2010 ArLeaf_2YGradLin_adjust2_101213
+In the last one the model has not actually been adjusted. This will be done here, where the drop in 
+length will be lessened. 
+
+13/12/2010 ArLeaf_2YouthsGradLinear_adjusted_101213
+Adjust freely the linear drop to match the data, i.e. at least phase B. 
+
+02/12/2010 ArLeaf_2YouthGradLinear_101202
+The prox gradient is steep to fit the 1D profile better. Here growth rates will drop linearly. This means
+that leaf growth cannot be model throughout development, but can only account for the phases shown here,
+but this will be a priminary look. 
+
+
+01/12/2010 ArLeaf_2YouthsSteepGrad_101201
+the last model has been adjusted. However, the tip is still very strong. Also the 1D profile is simply not curved. 
+For this we would need a steeper prox gradient. The prox gradient will be adjusted in this model. 
+
+24/11/2010 ArLeaf_LamOnly2Youth_101124
+
+2 youth factors instead of 1, allows bettwe adjustment of the model. 

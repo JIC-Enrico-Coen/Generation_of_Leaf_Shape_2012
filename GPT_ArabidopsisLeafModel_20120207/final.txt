@@ -1,0 +1,8 @@
+switch modeloperation
+    case 'EXCISION' % take of part of the canvas (expressing DISTAL)
+        if realtime > 147 && realtime < 148+ dt % cut
+            m = leaf_deletenodes( m, id_distal_l==1);
+        end
+end
+
+% In this section you may modify the mesh in any way whatsoever.
